@@ -68,6 +68,10 @@ logs
 **/*.backup.*
 **/*.back.*
 
+frontend/.env
+frontend/dist/
+frontend/.vite/" >> .gitignore
+
 node_modules
 bower_components
 
