@@ -3,27 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Services\CategoriaService;
-use App\Http\Resources\CategoriaResource;
-use Illuminate\Http\Request;
+use App\Models\Categoria;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
-    protected CategoriaService $categoriaService;
-
-    public function __construct(CategoriaService $categoriaService)
-    {
-        $this->categoriaService = $categoriaService;
-    }
-
     public function index(): JsonResponse
     {
         try {
-            $categorias = $this->categoriaService->getAll();
+            $categorias = Categoria::withCount('productos')->get();
             return response()->json([
                 'success' => true,
-                'data' => CategoriaResource::collection($categorias),
+                'data' => $categorias,
                 'message' => 'Categorías obtenidas exitosamente'
             ]);
         } catch (\Exception $e) {
@@ -31,6 +23,23 @@ class CategoriaController extends Controller
                 'success' => false,
                 'message' => 'Error al obtener categorías: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function show($id): JsonResponse
+    {
+        try {
+            $categoria = Categoria::withCount('productos')->findOrFail($id);
+            return response()->json([
+                'success' => true,
+                'data' => $categoria,
+                'message' => 'Categoría obtenida exitosamente'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener categoría: ' . $e->getMessage()
+            ], 404);
         }
     }
 
@@ -46,10 +55,17 @@ class CategoriaController extends Controller
                 'activo' => 'boolean',
             ]);
 
-            $categoria = $this->categoriaService->create($validated);
+            // Generar código automático si no viene
+            if (!isset($validated['codigo'])) {
+                $last = Categoria::orderBy('id', 'desc')->first();
+                $number = $last ? intval(substr($last->codigo, -4)) + 1 : 1;
+                $validated['codigo'] = 'CAT-' . str_pad($number, 4, '0', STR_PAD_LEFT);
+            }
+
+            $categoria = Categoria::create($validated);
             return response()->json([
                 'success' => true,
-                'data' => new CategoriaResource($categoria),
+                'data' => $categoria,
                 'message' => 'Categoría creada exitosamente'
             ], 201);
         } catch (\Exception $e) {
@@ -57,23 +73,6 @@ class CategoriaController extends Controller
                 'success' => false,
                 'message' => 'Error al crear categoría: ' . $e->getMessage()
             ], 500);
-        }
-    }
-
-    public function show($id): JsonResponse
-    {
-        try {
-            $categoria = $this->categoriaService->getById($id);
-            return response()->json([
-                'success' => true,
-                'data' => new CategoriaResource($categoria),
-                'message' => 'Categoría obtenida exitosamente'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error al obtener categoría: ' . $e->getMessage()
-            ], 404);
         }
     }
 
@@ -89,10 +88,11 @@ class CategoriaController extends Controller
                 'activo' => 'boolean',
             ]);
 
-            $categoria = $this->categoriaService->update($id, $validated);
+            $categoria = Categoria::findOrFail($id);
+            $categoria->update($validated);
             return response()->json([
                 'success' => true,
-                'data' => new CategoriaResource($categoria),
+                'data' => $categoria,
                 'message' => 'Categoría actualizada exitosamente'
             ]);
         } catch (\Exception $e) {
@@ -106,7 +106,8 @@ class CategoriaController extends Controller
     public function destroy($id): JsonResponse
     {
         try {
-            $this->categoriaService->delete($id);
+            $categoria = Categoria::findOrFail($id);
+            $categoria->delete();
             return response()->json([
                 'success' => true,
                 'message' => 'Categoría eliminada exitosamente'

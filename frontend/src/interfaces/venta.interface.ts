@@ -4,33 +4,31 @@ export interface Cliente {
     apellido: string;
     email: string;
     telefono?: string;
+    direccion?: string;
     documento: string;
     tipo_documento: string;
     nombre_completo?: string;
+    activo?: boolean;
 }
 
-export interface Producto {
+export interface ProductoVenta {
     id: number;
     codigo: string;
     nombre: string;
     descripcion?: string;
-    precio_compra: number;
     precio_venta: number;
     stock: number;
-    stock_minimo: number;
-    categoria?: string;
-    activo: boolean;
 }
 
 export interface DetalleVenta {
-    id: number;
+    id?: number;
     producto_id: number;
     cantidad: number;
     precio_unitario: number;
     subtotal: number;
     descuento: number;
     total: number;
-    producto?: Producto;
+    producto?: ProductoVenta;
 }
 
 export interface Venta {
@@ -43,7 +41,7 @@ export interface Venta {
     igv: number;
     descuento: number;
     total: number;
-    metodo_pago: string;
+    metodo_pago: 'EFECTIVO' | 'TARJETA' | 'TRANSFERENCIA';
     estado: 'PENDIENTE' | 'COMPLETADA' | 'CANCELADA';
     observaciones?: string;
     detalles: DetalleVenta[];

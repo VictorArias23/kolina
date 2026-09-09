@@ -1,31 +1,17 @@
 <?php
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
-
-// -> se agrega nuevo controlador a la API "VENTAS"
 use App\Http\Controllers\Api\VentaController;
-
-// se agregan los controladores de la API "INVENTARIO"
 use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\ProductoController;
 use App\Http\Controllers\Api\MovimientoInventarioController;
+use App\Http\Controllers\Api\ClienteController;
 
-Route::get('/test', function () {
-    return response()->json([
-        'message' => 'API funcionando correctamente',
-        'project' => 'Kolina'
-    ]);
-});
-
-// Ejemplo de ruta protegida
-Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
-});
-
-// RUTAS
 Route::prefix('v1')->group(function () {
+    // Clientes
+    Route::get('/clientes', [ClienteController::class, 'index']);
+    Route::get('/clientes/{id}', [ClienteController::class, 'show']);
+
     // Módulo de Ventas
     Route::apiResource('ventas', VentaController::class);
     Route::patch('ventas/{id}/estado', [VentaController::class, 'cambiarEstado']);
@@ -46,4 +32,3 @@ Route::prefix('v1')->group(function () {
     Route::get('movimientos/producto/{productoId}', [MovimientoInventarioController::class, 'byProducto']);
     Route::get('movimientos/tipo/{tipo}', [MovimientoInventarioController::class, 'byTipo']);
 });
-

@@ -1,27 +1,27 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography, Paper } from '@mui/material';
 import { Add } from '@mui/icons-material';
-import VentaList from '../components/Ventas/VentaList';
-import VentaForm from '../components/Ventas/VentaForm';
-import { Venta } from '../interfaces/venta.interface';
+import CategoriaList from '../components/Categorias/CategoriaList';
+import CategoriaForm from '../components/Categorias/CategoriaForm';
+import { Categoria } from '../interfaces/categoria.interface';
 
-const VentasPage: React.FC = () => {
+const CategoriasPage: React.FC = () => {
     const [formOpen, setFormOpen] = useState(false);
-    const [selectedVenta, setSelectedVenta] = useState<Venta | null>(null);
+    const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(null);
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     const handleAdd = () => {
-        setSelectedVenta(null);
+        setSelectedCategoria(null);
         setFormOpen(true);
     };
 
-    const handleEdit = (venta: Venta) => {
-        setSelectedVenta(venta);
+    const handleEdit = (categoria: Categoria) => {
+        setSelectedCategoria(categoria);
         setFormOpen(true);
     };
 
-    const handleView = (venta: Venta) => {
-        console.log('Ver venta:', venta);
+    const handleView = (categoria: Categoria) => {
+        console.log('Ver categoría:', categoria);
     };
 
     const handleSuccess = () => {
@@ -33,22 +33,22 @@ const VentasPage: React.FC = () => {
             <Paper sx={{ p: 3 }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                     <Typography variant="h5">
-                        Gestión de Ventas
+                        Gestión de Categorías
                     </Typography>
                     <Button variant="contained" startIcon={<Add />} onClick={handleAdd}>
-                        Nueva Venta
+                        Nueva Categoría
                     </Button>
                 </Box>
 
-                <VentaList
+                <CategoriaList
                     onEdit={handleEdit}
                     onView={handleView}
                     refreshTrigger={refreshTrigger}
                 />
 
-                <VentaForm
+                <CategoriaForm
                     open={formOpen}
-                    venta={selectedVenta}
+                    categoria={selectedCategoria}
                     onClose={() => setFormOpen(false)}
                     onSuccess={handleSuccess}
                 />
@@ -57,4 +57,4 @@ const VentasPage: React.FC = () => {
     );
 };
 
-export default VentasPage;
+export default CategoriasPage;

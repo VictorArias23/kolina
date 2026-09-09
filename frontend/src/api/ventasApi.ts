@@ -1,41 +1,42 @@
 import axios from 'axios';
-import type { Venta, CreateVentaDTO, UpdateVentaDTO } from '../interfaces/venta.interface';
+import { Venta, CreateVentaDTO, UpdateVentaDTO } from '../interfaces/venta.interface';
 
-const API_URL = 'http://localhost:8000/api/v1';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1';
+
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 export const ventasApi = {
-    // Obtener todas las ventas
     getAll: async (): Promise<Venta[]> => {
-        const response = await axios.get(`${API_URL}/ventas`);
+        const response = await api.get('/ventas');
         return response.data.data;
     },
 
-    // Obtener una venta por ID
     getById: async (id: number): Promise<Venta> => {
-        const response = await axios.get(`${API_URL}/ventas/${id}`);
+        const response = await api.get(`/ventas/${id}`);
         return response.data.data;
     },
 
-    // Crear nueva venta
     create: async (data: CreateVentaDTO): Promise<Venta> => {
-        const response = await axios.post(`${API_URL}/ventas`, data);
+        const response = await api.post('/ventas', data);
         return response.data.data;
     },
 
-    // Actualizar venta
     update: async (id: number, data: UpdateVentaDTO): Promise<Venta> => {
-        const response = await axios.put(`${API_URL}/ventas/${id}`, data);
+        const response = await api.put(`/ventas/${id}`, data);
         return response.data.data;
     },
 
-    // Eliminar venta
     delete: async (id: number): Promise<void> => {
-        await axios.delete(`${API_URL}/ventas/${id}`);
+        await api.delete(`/ventas/${id}`);
     },
 
-    // Cambiar estado
     cambiarEstado: async (id: number, estado: string): Promise<Venta> => {
-        const response = await axios.patch(`${API_URL}/ventas/${id}/estado`, { estado });
+        const response = await api.patch(`/ventas/${id}/estado`, { estado });
         return response.data.data;
     }
 };
