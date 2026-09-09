@@ -18,15 +18,15 @@ return new class extends Migration
             $table->integer('stock_anterior');
             $table->integer('stock_nuevo');
             $table->text('motivo')->nullable();
-            $table->string('documento_referencia')->nullable(); // N° de factura, orden de compra, etc.
+            $table->string('documento_referencia')->nullable();
             $table->foreignId('usuario_id')->nullable()->constrained('users');
             $table->foreignId('venta_id')->nullable()->constrained('ventas')->onDelete('set null');
-            $table->foreignId('compra_id')->nullable(); // Para futura compra
+            $table->foreignId('compra_id')->nullable();
             $table->timestamps();
 
-            // Índices para búsquedas rápidas
+            // Índices
             $table->index(['producto_id', 'tipo_movimiento']);
-            $table->index(['fecha_creacion', 'tipo_movimiento']);
+            $table->index(['created_at', 'tipo_movimiento']);
         });
     }
 

@@ -13,8 +13,8 @@ return new class extends Migration
             $table->string('nombre');
             $table->string('codigo')->unique();
             $table->text('descripcion')->nullable();
-            $table->string('color')->default('#3490dc'); // Para identificación visual
-            $table->string('icono')->nullable(); // Icono de Font Awesome
+            $table->string('color')->default('#3490dc');
+            $table->string('icono')->nullable();
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });
